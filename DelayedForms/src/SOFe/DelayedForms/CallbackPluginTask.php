@@ -6,16 +6,18 @@ namespace SOFe\DelayedForms;
 
 use pocketmine\scheduler\PluginTask;
 
-class CallbackPluginTask extends PluginTask{
+class CallbackPluginTask extends PluginTask {
+
 	/** @var callable */
 	private $callback;
 
-	public function __construct(DelayedForms $owner, callable $callback){
+	public function __construct(DelayedForms $owner, callable $callback) {
 		parent::__construct($owner);
 		$this->callback = $callback;
 	}
 
-	public function onRun(int $currentTick) : void{
+	public function onRun(int $currentTick) : void {
 		($this->callback)();
 	}
+
 }
