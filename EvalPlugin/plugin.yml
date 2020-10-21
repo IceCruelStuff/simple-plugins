@@ -1,11 +1,12 @@
 name: EvalPlugin
 version: 1.0.0
-api: [3.0.0-ALPHA7, 3.0.0]
+api: 3.0.0
 main: EvalPlugin\EvalPlugin
 author: SOFe
 commands:
   eval:
     permission: eval
+
 permissions:
   eval:
     description: Use /eval
