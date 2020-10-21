@@ -1,5 +1,6 @@
 name: DailyReward
 author: SOFe
+description: Daily rewards plugin for PocketMine-MP
 version: 1.0.0
-api: 2.0.0
+api: 3.15.0
 main: SOFe\DailyReward\DailyReward
