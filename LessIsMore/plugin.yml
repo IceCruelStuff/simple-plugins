@@ -4,6 +4,7 @@ api:
 - 3.2.0
 author: SOFe
 main: SOFe\LessIsMore\LessIsMore
+description: A simple plugin that lets you create new commands with your own message responses
 
 permissions:
   lessismore:
