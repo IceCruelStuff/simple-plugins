@@ -8,18 +8,19 @@ use pocketmine\level\sound\PopSound;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 
-class MentionPings extends PluginBase implements Listener{
-	private static function searchLastToken(string $substr, string $default) : string{
+class MentionPings extends PluginBase implements Listener {
+
+	private static function searchLastToken(string $substr, string $default) : string {
 		$bold = false;
 		$italic = false;
-		foreach(TextFormat::tokenize($substr) as $token){
-			if(substr($token, 0, strlen(TextFormat::ESCAPE)) === TextFormat::ESCAPE){
+		foreach (TextFormat::tokenize($substr) as $token) {
+			if (substr($token, 0, strlen(TextFormat::ESCAPE)) === TextFormat::ESCAPE) {
 				$default = $token;
-				if($token === TextFormat::BOLD){
+				if ($token === TextFormat::BOLD) {
 					$bold = true;
-				}elseif($token === TextFormat::ITALIC){
+				} else if ($token === TextFormat::ITALIC) {
 					$italic = true;
-				}elseif($token === TextFormat::RESET){
+				} else if ($token === TextFormat::RESET) {
 					$bold = $italic = false;
 				}
 			}
@@ -27,15 +28,16 @@ class MentionPings extends PluginBase implements Listener{
 		return ($bold ? TextFormat::BOLD : TextFormat::RESET) . ($italic ? TextFormat::ITALIC : "") . $default;
 	}
 
-	private $startSymbol, $endSymbol;
+	private $startSymbol;
+	private $endSymbol;
 	private $rawSubstring;
 
-	public function onEnable(){
+	public function onEnable() {
 		$this->saveDefaultConfig();
 		$pattern = '/\$\{([A-Z_]+)\}/';
-		$callback = function($match){
+		$callback = function($match) {
 			$name = $match[1];
-			if(defined(TextFormat::class . "::" . strtoupper($name))){
+			if (defined(TextFormat::class . "::" . strtoupper($name))) {
 				return constant(TextFormat::class . "::" . strtoupper($name));
 			}
 			return $match[0];
@@ -51,15 +53,15 @@ class MentionPings extends PluginBase implements Listener{
 	 * @priority        HIGHEST
 	 * @ignoreCancelled true
 	 */
-	public function onChat(PlayerChatEvent $event){
+	public function onChat(PlayerChatEvent $event) {
 		$message = $event->getMessage();
 		$recipients = $event->getRecipients();
-		foreach($recipients as $i => $recipient){
+		foreach ($recipients as $i => $recipient) {
 			$name = $recipient->getName();
 			$escaped = preg_quote($name, "/");
 			$pattern = $this->rawSubstring ? "/$escaped/" : ('/(^|[^A-Za-z0-9_])(' . $escaped . ')($|[^A-Za-z0-9_])/');
 			$lastOffset = 0;
-			$newMessage = preg_replace_callback($pattern, function($match) use ($event, $message, &$lastOffset){
+			$newMessage = preg_replace_callback($pattern, function($match) use ($event, $message, &$lastOffset) {
 				list($whole, $front, $name, $back) = $this->rawSubstring ? [$match[0], "", $match[0], ""] : $match;
 				$lastOffset = strpos($message, $whole, $lastOffset);
 				$subOutput = $this->getServer()->getLanguage()->translateString($event->getFormat(),
@@ -69,7 +71,7 @@ class MentionPings extends PluginBase implements Listener{
 				$lastOffset += strlen($edit);
 				return $edit;
 			}, $message);
-			if($message !== $newMessage){
+			if ($message !== $newMessage) {
 				unset($recipients[$i]);
 				$recipient->sendMessage($this->getServer()->getLanguage()->translateString($event->getFormat(),
 					[$event->getPlayer()->getDisplayName(), $newMessage]));
@@ -78,4 +80,5 @@ class MentionPings extends PluginBase implements Listener{
 		}
 		$event->setRecipients($recipients);
 	}
+
 }
