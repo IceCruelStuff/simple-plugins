@@ -31,7 +31,8 @@ use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
-class LessCommand extends Command implements PluginIdentifiableCommand{
+class LessCommand extends Command implements PluginIdentifiableCommand {
+
 	/** @var LessIsMore */
 	private $plugin;
 	/** @var string[][] */
@@ -39,7 +40,7 @@ class LessCommand extends Command implements PluginIdentifiableCommand{
 	/** @var bool */
 	private $preferForms;
 
-	public function __construct(LessIsMore $plugin, string $name, string $description, array $aliases, array $pages, bool $preferForms){
+	public function __construct(LessIsMore $plugin, string $name, string $description, array $aliases, array $pages, bool $preferForms) {
 		parent::__construct($name, $description, "/$name [1 - " . \count($pages) . "]", $aliases);
 		$parent = $plugin->getServer()->getPluginManager()->getPermission("lessismore");
 		\assert($parent !== null);
@@ -52,9 +53,9 @@ class LessCommand extends Command implements PluginIdentifiableCommand{
 		$this->preferForms = $preferForms;
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args) : void{
+	public function execute(CommandSender $sender, string $commandLabel, array $args) : void {
 		$page = isset($args[0]) ? (int) $args[0] : 1;
-		if($page < 1 || $page > \count($this->pages)){
+		if ($page < 1 || $page > \count($this->pages)) {
 			$sender->sendMessage(TextFormat::RED . "Usage: " . $this->getUsage());
 			return;
 		}
@@ -62,36 +63,43 @@ class LessCommand extends Command implements PluginIdentifiableCommand{
 		$this->send($sender, $page);
 	}
 
-	private function send(CommandSender $sender, int $page){
+	private function send(CommandSender $sender, int $page) {
 		$title = TextFormat::AQUA . "Showing page $page of " . \count($this->pages) . ":";
 		$content = [];
-		foreach($this->pages[$page - 1] as $line){
+		foreach ($this->pages[$page - 1] as $line) {
 			$content[] = $line;
 		}
 
-		if($this->preferForms && $sender instanceof Player){
+		if ($this->preferForms && $sender instanceof Player) {
 			$form = new ModalForm(null);
 			$form->setTitle($title);
 			$form->setContent(implode("\n", $content));
 			$form->setButton1($page === 1 ? "Close" : "Previous");
 			$form->setButton2($page === \count($this->pages) ? "Close" : "Next");
-			$form->setCallable(function($_, ?bool $next) use($sender, $page) : void{
-				if($next === null) return;
-				if(!$next && $page === \count($this->pages)) return;
-				if($next && $page === 1) return;
+			$form->setCallable(function($_, ?bool $next) use($sender, $page) : void {
+				if ($next === null) {
+					return;
+				}
+				if (!$next && $page === \count($this->pages)) {
+					return;
+				}
+				if ($next && $page === 1) {
+					return;
+				}
 				$nextPage = $page + ($next ? -1 : 1);
 				$this->send($sender, $nextPage);
 			});
 			$form->sendToPlayer($sender);
-		}else{
+		} else {
 			$sender->sendMessage($title);
-			foreach($content as $line){
+			foreach ($content as $line) {
 				$sender->sendMessage($line);
 			}
 		}
 	}
 
-	public function getPlugin() : Plugin{
+	public function getPlugin() : Plugin {
 		return $this->plugin;
 	}
+
 }
