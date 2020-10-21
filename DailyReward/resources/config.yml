@@ -20,14 +20,17 @@ actions:
   - days: 1
     type: command
     commands: "msg @p Hey! It has been @o days we haven't seen you!"
+
   - days: 2
     type: command
     commands: "msg @p You have come on the server for two consecutive days! Come back tomorrow to get a diamond!"
+
   - days: 3-
     type: command
     commands:
       - "give @p diamond 1"
       - "msg @p Thank you for your support! You have received a diamond!"
+
   - days: 7n
     type: command
     commands:
